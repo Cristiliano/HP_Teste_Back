@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace HP.Clima.Domain.Models;
 
-public class ViaCepResponse
+public class ViaCepApiResponse
 {
     [JsonPropertyName("cep")]
     public string Cep { get; set; } = string.Empty;

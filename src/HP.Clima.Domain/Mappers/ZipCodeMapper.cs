@@ -1,6 +1,6 @@
-using HP.Clima.Domain.Models;
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Entities;
+using HP.Clima.Domain.Models;
 
 namespace HP.Clima.Domain.Mappers;
 
@@ -63,7 +63,7 @@ public static class ZipCodeMapper
         };
     }
 
-    public static ZipCodeDto ViaCepResponseToDto(this ViaCepResponse response)
+    public static ZipCodeDto ViaCepResponseToDto(this ViaCepApiResponse response)
     {
         return new ZipCodeDto
         {

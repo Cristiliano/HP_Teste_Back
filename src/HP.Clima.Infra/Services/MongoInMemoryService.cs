@@ -9,7 +9,10 @@ public class MongoInMemoryService : IDisposable
 
     public void Start()
     {
-        _mongoDbRunner = MongoDbRunner.Start();
+        _mongoDbRunner = MongoDbRunner.Start(
+            singleNodeReplSet: false,
+            additionalMongodArguments: "--quiet --logpath /dev/null"
+        );
         ConnectionString = _mongoDbRunner.ConnectionString;
     }
 

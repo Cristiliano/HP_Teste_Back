@@ -1,8 +1,8 @@
 using FluentValidation;
-using HP.Clima.API.DTOs;
+using HP.Clima.Domain.DTOs;
 using System.Text.RegularExpressions;
 
-namespace HP.Clima.API.Validators;
+namespace HP.Clima.Domain.Validators;
 
 public partial class CepRequestValidator : AbstractValidator<CepRequestDto>
 {

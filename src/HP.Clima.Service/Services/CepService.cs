@@ -2,43 +2,100 @@ using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Mappers;
 using HP.Clima.Domain.Repositories;
 using HP.Clima.Domain.Interfaces.Services;
-using HP.Clima.Service.Proxies.BrasilApi;
-using Refit;
+using HP.Clima.Domain.Exceptions;
+using HP.Clima.Service.Handlers;
+using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace HP.Clima.Service.Services;
 
-public class CepService(IBrasilApiProxy brasilApiProxy, IZipCodeRepository zipCodeRepository) : ICepService
+public class CepService(
+    IEnumerable<ICepApiHandler> cepApiHandlers,
+    IZipCodeRepository zipCodeRepository,
+    IValidationService validationService,
+    IValidator<CepRequestDto> validator,
+    ILogger<CepService> logger) : ICepService
 {
-    private readonly IBrasilApiProxy _brasilApiProxy = brasilApiProxy;
+    private readonly IEnumerable<ICepApiHandler> _cepApiHandlers = cepApiHandlers;
     private readonly IZipCodeRepository _zipCodeRepository = zipCodeRepository;
+    private readonly IValidationService _validationService = validationService;
+    private readonly IValidator<CepRequestDto> _validator = validator;
+    private readonly ILogger<CepService> _logger = logger;
 
     public async Task<ZipCodeDto?> GetCepInfoAsync(string zipCode)
     {
-        var existingZipCode = await _zipCodeRepository.GetByZipCodeAsync(zipCode);
+        CepRequestDto cepRequest = new(zipCode);
+        
+        await _validationService.ValidateAsync(cepRequest, _validator, $"/api/cep/{zipCode}");
+
+        var normalizedZipCode = cepRequest.GetNormalizedZipCode();
+
+        var existingZipCode = await GetFromCacheAsync(normalizedZipCode);
         if (existingZipCode != null)
         {
+            return existingZipCode;
+        }
+
+        var zipCodeDto = await TryGetFromExternalApisAsync(normalizedZipCode);
+        
+        if (zipCodeDto != null)
+        {
+            await SaveToCacheAsync(zipCodeDto);
+            return zipCodeDto;
+        }
+
+        _logger.LogError("CEP {ZipCode} não encontrado em nenhuma API disponível", normalizedZipCode);
+        throw new NotFoundException(
+            detail: $"CEP {zipCode} não encontrado nas bases de dados consultadas.",
+            instance: $"/api/cep/{zipCode}"
+        );
+    }
+
+    private async Task<ZipCodeDto?> GetFromCacheAsync(string normalizedZipCode)
+    {
+        var existingZipCode = await _zipCodeRepository.GetByZipCodeAsync(normalizedZipCode);
+        
+        if (existingZipCode != null)
+        {
+            _logger.LogInformation("CEP {ZipCode} encontrado no cache local", normalizedZipCode);
             return existingZipCode.ToDto();
         }
 
-        try
+        return null;
+    }
+
+    private async Task<ZipCodeDto?> TryGetFromExternalApisAsync(string normalizedZipCode)
+    {
+        foreach (var handler in _cepApiHandlers)
         {
-            var response = await _brasilApiProxy.GetCepWithResponseAsync(zipCode);
+            var (success, data) = await handler.TryGetCepAsync(normalizedZipCode);
             
-            if (response.IsSuccessStatusCode && response.Content != null)
+            if (success && data != null)
             {
-                var zipCodeDto = response.Content.BrasilApiCepResponseToDto();
-                
-                var zipCodeEntity = zipCodeDto.ToEntity();
-                await _zipCodeRepository.CreateAsync(zipCodeEntity);
-                
-                return zipCodeDto;
+                _logger.LogInformation("CEP {ZipCode} obtido com sucesso via {ApiName}", 
+                    normalizedZipCode, handler.ApiName);
+                return data;
             }
-        }
-        catch (ApiException ex)
-        {
-            Console.WriteLine($"Erro ao consultar CEP {zipCode}: {ex.Message}");
+            
+            _logger.LogWarning("{ApiName} falhou para CEP {ZipCode}. Tentando próxima API...", 
+                handler.ApiName, normalizedZipCode);
         }
 
         return null;
+    }
+
+    private async Task SaveToCacheAsync(ZipCodeDto zipCodeDto)
+    {
+        try
+        {
+            var zipCodeEntity = zipCodeDto.ToEntity();
+            await _zipCodeRepository.CreateAsync(zipCodeEntity);
+            _logger.LogInformation("CEP {ZipCode} salvo com sucesso no cache", zipCodeDto.ZipCode);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao salvar CEP {ZipCode} no cache: {Message}", 
+                zipCodeDto.ZipCode, ex.Message);
+        }
     }
 }
