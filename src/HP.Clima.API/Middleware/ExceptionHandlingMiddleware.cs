@@ -52,6 +52,15 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             problemDetails.Detail = notFoundEx.Detail;
             problemDetails.Instance = notFoundEx.Instance;
         }
+        else if (exception is ConflictException conflictEx)
+        {
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            problemDetails.Status = StatusCodes.Status409Conflict;
+            problemDetails.Type = "https://api.example.com/errors/conflict";
+            problemDetails.Title = "Conflito";
+            problemDetails.Detail = conflictEx.Detail;
+            problemDetails.Instance = conflictEx.Instance;
+        }
         else
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;

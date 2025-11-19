@@ -13,6 +13,9 @@ public class ViaCepApiResponse
     [JsonPropertyName("complemento")]
     public string Complemento { get; set; } = string.Empty;
 
+    [JsonPropertyName("unidade")]
+    public string Unidade { get; set; } = string.Empty;
+
     [JsonPropertyName("bairro")]
     public string Bairro { get; set; } = string.Empty;
 
@@ -21,6 +24,12 @@ public class ViaCepApiResponse
 
     [JsonPropertyName("uf")]
     public string Uf { get; set; } = string.Empty;
+
+    [JsonPropertyName("estado")]
+    public string Estado { get; set; } = string.Empty;
+
+    [JsonPropertyName("regiao")]
+    public string Regiao { get; set; } = string.Empty;
 
     [JsonPropertyName("ibge")]
     public string Ibge { get; set; } = string.Empty;

@@ -17,3 +17,11 @@ public class NotFoundException(
     public string Detail { get; } = detail;
     public string Instance { get; } = instance;
 }
+
+public class ConflictException(
+    string detail, 
+    string instance = "") : Exception(detail)
+{
+    public string Detail { get; } = detail;
+    public string Instance { get; } = instance;
+}

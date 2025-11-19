@@ -50,7 +50,7 @@ public static class ZipCodeMapper
         {
             ZipCode = response.Cep,
             Street = response.Street,
-            District = response.District,
+            District = response.Neighborhood,
             City = response.City,
             State = response.State,
             Ibge = "",

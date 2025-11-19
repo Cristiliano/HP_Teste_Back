@@ -51,6 +51,27 @@ public class CepService(
         );
     }
 
+    public async Task<ZipCodeDto> SaveCepInfoAsync(CepRequestDto cepRequest)
+    {
+        await _validationService.ValidateAsync(cepRequest, _validator, "/api/cep");
+
+        var normalizedZipCode = cepRequest.GetNormalizedZipCode();
+
+        var existingZipCode = await _zipCodeRepository.GetByZipCodeAsync(normalizedZipCode);
+        if (existingZipCode != null)
+        {
+            _logger.LogWarning("CEP {ZipCode} já existe no banco de dados", normalizedZipCode);
+            throw new ConflictException(
+                detail: $"CEP {cepRequest.ZipCode} já está cadastrado no sistema.",
+                instance: "/api/cep"
+            );
+        }
+
+        var zipCodeDto = await GetCepInfoAsync(cepRequest.ZipCode);
+        
+        return zipCodeDto!;
+    }
+
     private async Task<ZipCodeDto?> GetFromCacheAsync(string normalizedZipCode)
     {
         var existingZipCode = await _zipCodeRepository.GetByZipCodeAsync(normalizedZipCode);
