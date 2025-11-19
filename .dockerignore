@@ -1,0 +1,76 @@
+﻿# Git and version control
+**/.git
+**/.gitignore
+**/.gitattributes
+
+# IDE and editor files
+**/.vs
+**/.vscode
+**/.idea
+**/.project
+**/.settings
+**/.toolstarget
+
+# Build outputs
+**/bin
+**/obj
+**/out
+
+# User-specific files
+**/*.*proj.user
+**/*.user
+**/*.suo
+**/*.cache
+**/.suo
+
+# Test results
+**/TestResults
+**/*.trx
+**/*.coverage
+**/*.coveragexml
+
+# Packages
+**/packages
+
+# Docker files (except the one being used)
+**/.dockerignore
+**/docker-compose*
+**/Dockerfile*
+!**/Dockerfile
+
+# Environment and config
+**/.env
+**/.env.local
+**/.env.*.local
+**/secrets.dev.yaml
+**/values.dev.yaml
+
+# Logs
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Database files
+**/*.dbmdl
+**/*.jfm
+**/*.mdf
+**/*.ldf
+
+# Azure and deployment
+**/azds.yaml
+**/charts
+
+# Node.js (if any)
+**/node_modules
+
+# Documentation
+README.md
+LICENSE
+**/*.md
+!**/docs/**/*.md
+
+# Temporary files
+**/tmp
+**/temp
+**/.tmp
