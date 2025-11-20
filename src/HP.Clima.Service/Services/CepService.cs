@@ -3,9 +3,9 @@ using HP.Clima.Domain.Mappers;
 using HP.Clima.Domain.Repositories;
 using HP.Clima.Domain.Interfaces.Services;
 using HP.Clima.Domain.Exceptions;
-using HP.Clima.Service.Handlers;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using HP.Clima.Service.Handlers.Interfaces;
 
 namespace HP.Clima.Service.Services;
 

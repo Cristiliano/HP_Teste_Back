@@ -6,7 +6,7 @@ using HP.Clima.Domain.Entities;
 using HP.Clima.Domain.Exceptions;
 using HP.Clima.Domain.Interfaces.Services;
 using HP.Clima.Domain.Repositories;
-using HP.Clima.Service.Handlers;
+using HP.Clima.Service.Handlers.Interfaces;
 using HP.Clima.Service.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
