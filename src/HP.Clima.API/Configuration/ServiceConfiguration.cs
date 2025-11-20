@@ -17,7 +17,34 @@ public static class ServiceConfiguration
     {
         services.AddEndpointsApiExplorer();
         services.AddControllers();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new()
+            {
+                Title = "HP Clima API",
+                Version = "v1",
+                Description = "API para consulta de CEPs e informações meteorológicas",
+                Contact = new()
+                {
+                    Name = "HP Clima",
+                    Email = "contato@hpclima.com.br"
+                }
+            });
+
+            // Habilita comentários XML para documentação
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (File.Exists(xmlPath))
+            {
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            }
+
+            // Habilita anotações do Swashbuckle
+            options.EnableAnnotations();
+            
+            // Configura exemplos de schemas
+            options.SchemaFilter<SwaggerSchemaExampleFilter>();
+        });
     }
 
     private static void ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
