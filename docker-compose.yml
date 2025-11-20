@@ -30,10 +30,9 @@ services:
     restart: unless-stopped
     ports:
       - "5109:8080"
-      - "5110:8081"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
       - MongoDbSettings__ConnectionString=mongodb://admin:admin123@mongodb:27017
       - MongoDbSettings__DatabaseName=hp_clima
       - HttpClientOptions__BrasilApi__BaseUrl=https://brasilapi.com.br/api/cep

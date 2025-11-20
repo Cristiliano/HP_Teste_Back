@@ -274,7 +274,7 @@ docker-compose ps
 
 ### Ver Uso de Recursos
 ```bash
-docker status hp-clima-api hp-clima-mongodb
+docker stats hp-clima-api hp-clima-mongodb
 ```
 
 ### Acessar Shell do Container

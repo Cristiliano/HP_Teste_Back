@@ -41,8 +41,8 @@ RUN dotnet publish "HP.Clima.API.csproj" \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
+# Install curl for healthcheck and ICU libraries for globalization
+RUN apk add --no-cache curl icu-libs
 
 # Create non-root user for security
 RUN addgroup -g 1000 appuser && \
