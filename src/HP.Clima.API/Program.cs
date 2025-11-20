@@ -10,7 +10,9 @@ builder.Services.ConfigureServices(configuration);
 builder.Services.AddInfrastructure(configuration);
 builder.Services.AddServices();
 builder.Services.AddCepHandlers();
+builder.Services.AddWeatherHandlers();
 builder.Services.AddProxies();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

@@ -51,6 +51,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             problemDetails.Title = "Recurso Não Encontrado";
             problemDetails.Detail = notFoundEx.Detail;
             problemDetails.Instance = notFoundEx.Instance;
+            problemDetails.ErrorCode = notFoundEx.ErrorCode;
         }
         else if (exception is ConflictException conflictEx)
         {

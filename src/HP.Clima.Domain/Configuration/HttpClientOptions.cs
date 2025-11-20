@@ -7,6 +7,9 @@ public class HttpClientOptions
     public int TimeoutSeconds { get; set; } = 30;
     public ApiEndpointOptions BrasilApi { get; set; } = new();
     public ApiEndpointOptions ViaCep { get; set; } = new();
+    public ApiEndpointOptions OpenMeteo { get; set; } = new();
+    public ApiEndpointOptions OpenMeteoGeocoding { get; set; } = new();
+    public ApiEndpointOptions OpenWeatherMap { get; set; } = new();
 }
 
 public class ApiEndpointOptions

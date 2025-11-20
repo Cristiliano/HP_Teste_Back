@@ -16,7 +16,7 @@ public static class ZipCodeMapper
             City = entity.City,
             State = entity.State,
             Ibge = entity.Ibge,
-            Location = new LocationDto
+            Location = new LocationZipCodeDto
             {
                 Lat = entity.Lat ?? 0,
                 Lon = entity.Lon ?? 0
@@ -54,7 +54,7 @@ public static class ZipCodeMapper
             City = response.City,
             State = response.State,
             Ibge = "",
-            Location = new LocationDto
+            Location = new LocationZipCodeDto
             {
                 Lat = lat,
                 Lon = lon
@@ -73,7 +73,7 @@ public static class ZipCodeMapper
             City = response.Localidade,
             State = response.Uf,
             Ibge = response.Ibge,
-            Location = new LocationDto
+            Location = new LocationZipCodeDto
             {
                 Lat = 0, 
                 Lon = 0  
