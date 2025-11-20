@@ -26,17 +26,42 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddMongoDbSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        var mongoInMemoryService = new MongoInMemoryService();
-        mongoInMemoryService.Start();
-        services.AddSingleton(mongoInMemoryService);
-
-        var mongoSettings = new MongoDbSettings
+        var mongoSection = configuration.GetSection(MongoDbSettings.SectionName);
+        
+        var mongoOptions = new MongoDbSettings
         {
-            ConnectionString = mongoInMemoryService.ConnectionString,
-            DatabaseName = "HP_Clima_DB",
-            ZipCodeLookupCollectionName = "ZipCodeLookups"
+            UseInMemory = bool.TryParse(mongoSection[nameof(MongoDbSettings.UseInMemory)], out var useInMemory) && useInMemory,
+            ConnectionString = mongoSection[nameof(MongoDbSettings.ConnectionString)] ?? "mongodb://localhost:27017",
+            DatabaseName = mongoSection[nameof(MongoDbSettings.DatabaseName)] ?? "HP_Clima_DB",
+            ZipCodeLookupCollectionName = mongoSection[nameof(MongoDbSettings.ZipCodeLookupCollectionName)] ?? "ZipCodeLookups"
         };
-        services.AddSingleton(mongoSettings);
+        
+        if (mongoOptions.UseInMemory)
+        {
+            services.AddSingleton(sp =>
+            {
+                var mongoInMemoryService = new MongoInMemoryService();
+                mongoInMemoryService.Start();
+                return mongoInMemoryService;
+            });
+        }
+        
+        services.AddSingleton(sp =>
+        {
+            if (mongoOptions.UseInMemory)
+            {
+                var mongoInMemoryService = sp.GetRequiredService<MongoInMemoryService>();
+                return new MongoDbSettings
+                {
+                    UseInMemory = true,
+                    ConnectionString = mongoInMemoryService.ConnectionString,
+                    DatabaseName = mongoOptions.DatabaseName,
+                    ZipCodeLookupCollectionName = mongoOptions.ZipCodeLookupCollectionName
+                };
+            }
+            
+            return mongoOptions;
+        });
 
         services.AddScoped<MongoDbContext>();
         
