@@ -74,9 +74,11 @@ Fornece previsão do tempo baseada nos CEPs cadastrados no sistema.
 - **[System.Text.Json](https://docs.microsoft.com/dotnet/api/system.text.json)** - Serializador JSON de alta performance nativo do .NET 8
 
 #### Testes
-- **[xUnit 2.9.2](https://xunit.net/)** - Framework de testes unitários moderno e extensível
-- **[Moq 4.20.72](https://github.com/moq/moq4)** - Biblioteca para criação de mocks e stubs em testes
-- **[FluentAssertions 7.0.0](https://fluentassertions.com/)** - Assertions fluentes que tornam testes mais legíveis
+- **[xUnit 2.5.3](https://xunit.net/)** - Framework de testes com suporte a Theory/InlineData/ClassData
+- **[Moq 4.20.72](https://github.com/moq/moq4)** - Criação de mocks para isolar dependências
+- **[FluentAssertions 7.0.0](https://fluentassertions.com/)** - Asserções expressivas (Should/Be/Return pattern)
+- **[Bogus 35.6.1](https://github.com/bchavez/Bogus)** - Gerador de dados fake para testes com localização pt_BR
+- **[Coverlet](https://github.com/coverlet-coverage/coverlet)** - Ferramenta de cobertura de código
 
 ---
 
