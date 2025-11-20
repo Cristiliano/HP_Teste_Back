@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: hp-clima-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: hp_clima
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - hp-clima-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: src/HP.Clima.API/Dockerfile
+    container_name: hp-clima-api
+    restart: unless-stopped
+    ports:
+      - "5109:8080"
+      - "5110:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - MongoDbSettings__ConnectionString=mongodb://admin:admin123@mongodb:27017
+      - MongoDbSettings__DatabaseName=hp_clima
+      - HttpClientOptions__BrasilApi__BaseUrl=https://brasilapi.com.br/api/cep
+      - HttpClientOptions__ViaCep__BaseUrl=https://viacep.com.br/ws
+      - HttpClientOptions__OpenMeteo__BaseUrl=https://api.open-meteo.com
+      - HttpClientOptions__OpenMeteoGeocoding__BaseUrl=https://geocoding-api.open-meteo.com
+      - HttpClientOptions__OpenWeatherMap__BaseUrl=https://api.openweathermap.org/data/2.5
+      - HttpClientOptions__OpenWeatherMap__ApiKey=4d06612a4cfae0c41e132217837e197c
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - hp-clima-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  hp-clima-network:
+    driver: bridge

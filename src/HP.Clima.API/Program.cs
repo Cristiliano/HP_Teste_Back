@@ -14,9 +14,13 @@ builder.Services.AddWeatherHandlers();
 builder.Services.AddProxies();
 builder.Services.AddMemoryCache();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.ConfigureSetup();
+
+app.MapHealthChecks("/health");
 
 app.Run();
 
