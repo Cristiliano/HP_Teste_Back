@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HP.Clima.Infra", "src\HP.Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit", "unit", "{8188D7BD-47CD-44AE-8826-E936B8EC59DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HP.Clima.Test.Unit", "test\unit\HP.Clima.Test.Integration\HP.Clima.Test.Unit.csproj", "{9CAE2652-919C-4158-8F31-071618C8DEB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HP.Clima.Test.Unit", "test\unit\HP.Clima.Unit.Test\HP.Clima.Test.Unit.csproj", "{9CAE2652-919C-4158-8F31-071618C8DEB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
