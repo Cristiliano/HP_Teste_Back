@@ -1,6 +1,6 @@
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Entities;
-using HP.Clima.Domain.Models;
+using HP.Clima.Domain.Mappers;
 using HP.Clima.Service.Proxies.OpenWeatherMap;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -69,8 +69,7 @@ public class OpenWeatherMapHandler(
                 return (false, null);
             }
 
-            var weatherDto = MapToWeatherResponse(
-                currentResponse.Content, 
+            var weatherDto = currentResponse.Content.OpenWeatherMapToDto(
                 forecastResponse.Content, 
                 zipCodeEntity, 
                 lat, 
@@ -92,46 +91,5 @@ public class OpenWeatherMapHandler(
                 ApiName, ex.Message);
             return (false, null);
         }
-    }
-
-    private static WeatherResponseDto MapToWeatherResponse(
-        OpenWeatherMapCurrentResponse current,
-        OpenWeatherMapForecastResponse forecast,
-        ZipCodeEntity zipCodeEntity,
-        double lat,
-        double lon,
-        int days)
-    {
-        var dailyForecasts = forecast.List
-            .Where(f => f.DtTxt.Contains("12:00:00"))
-            .Take(days)
-            .Select(item => new DailyWeatherDto
-            {
-                Date = DateTimeOffset.FromUnixTimeSeconds(item.Dt).ToString("yyyy-MM-dd"),
-                TempMinC = item.Main.TempMin,
-                TempMaxC = item.Main.TempMax
-            })
-            .ToList();
-
-        return new WeatherResponseDto
-        {
-            SourceZipCodeId = zipCodeEntity.Id.GetHashCode(),
-            Location = new LocationDto
-            {
-                Lat = lat,
-                Lon = lon,
-                City = zipCodeEntity.City,
-                State = zipCodeEntity.State
-            },
-            Current = new CurrentWeatherDto
-            {
-                TemperatureC = current.Main.Temp,
-                Humidity = current.Main.Humidity / 100.0,
-                ApparentTemperatureC = current.Main.FeelsLike,
-                ObservedAt = DateTimeOffset.FromUnixTimeSeconds(current.Dt).UtcDateTime
-            },
-            Daily = dailyForecasts,
-            Provider = "openweathermap"
-        };
     }
 }

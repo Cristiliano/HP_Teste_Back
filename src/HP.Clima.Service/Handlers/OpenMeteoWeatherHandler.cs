@@ -1,5 +1,6 @@
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Entities;
+using HP.Clima.Domain.Mappers;
 using HP.Clima.Service.Proxies.OpenMeteo;
 using Microsoft.Extensions.Logging;
 using Refit;
@@ -56,7 +57,7 @@ public class OpenMeteoWeatherHandler(
 
             if (response.IsSuccessStatusCode && response.Content != null)
             {
-                var weatherDto = MapToWeatherResponse(response.Content, zipCodeEntity, lat, lon);
+                var weatherDto = response.Content.OpenMeteoToDto(zipCodeEntity, lat, lon);
                 _logger.LogInformation("[{ApiName}] Clima obtido com sucesso", ApiName);
                 return (true, weatherDto);
             }
@@ -103,50 +104,5 @@ public class OpenMeteoWeatherHandler(
                 ApiName, city, state, ex.Message);
             return (false, 0, 0);
         }
-    }
-
-    private static WeatherResponseDto MapToWeatherResponse(
-        Domain.Models.OpenMeteoForecastResponse forecast,
-        ZipCodeEntity zipCodeEntity,
-        double lat,
-        double lon)
-    {
-        var dailyList = new List<DailyWeatherDto>();
-        var timeCount = forecast.Daily.Time.Count;
-        var minCount = forecast.Daily.Temperature2mMin.Count;
-        var maxCount = forecast.Daily.Temperature2mMax.Count;
-        
-        var count = Math.Min(Math.Min(timeCount, minCount), maxCount);
-        
-        for (int i = 0; i < count; i++)
-        {
-            dailyList.Add(new DailyWeatherDto
-            {
-                Date = forecast.Daily.Time[i],
-                TempMinC = forecast.Daily.Temperature2mMin[i],
-                TempMaxC = forecast.Daily.Temperature2mMax[i]
-            });
-        }
-        
-        return new WeatherResponseDto
-        {
-            SourceZipCodeId = zipCodeEntity.Id.GetHashCode(),
-            Location = new LocationDto
-            {
-                Lat = lat,
-                Lon = lon,
-                City = zipCodeEntity.City,
-                State = zipCodeEntity.State
-            },
-            Current = new CurrentWeatherDto
-            {
-                TemperatureC = forecast.Current.Temperature2m,
-                Humidity = forecast.Current.RelativeHumidity2m / 100.0,
-                ApparentTemperatureC = forecast.Current.ApparentTemperature,
-                ObservedAt = DateTime.Parse(forecast.Current.Time)
-            },
-            Daily = dailyList,
-            Provider = "open-meteo"
-        };
     }
 }
