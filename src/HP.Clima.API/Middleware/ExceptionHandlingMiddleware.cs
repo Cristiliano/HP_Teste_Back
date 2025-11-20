@@ -74,11 +74,3 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         return context.Response.WriteAsJsonAsync(problemDetails);
     }
 }
-
-public static class ExceptionHandlingMiddlewareExtensions
-{
-    public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder builder)
-    {
-        return builder.UseMiddleware<ExceptionHandlingMiddleware>();
-    }
-}

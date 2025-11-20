@@ -1,6 +1,6 @@
 using HP.Clima.Domain.DTOs;
 
-namespace HP.Clima.Service.Handlers;
+namespace HP.Clima.Service.Handlers.Interfaces;
 
 public interface ICepApiHandler
 {

@@ -1,7 +1,7 @@
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Entities;
 
-namespace HP.Clima.Service.Handlers;
+namespace HP.Clima.Service.Handlers.Interfaces;
 
 public interface IWeatherApiHandler
 {

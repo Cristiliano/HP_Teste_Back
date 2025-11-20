@@ -1,5 +1,6 @@
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Mappers;
+using HP.Clima.Service.Handlers.Interfaces;
 using HP.Clima.Service.Proxies.ViaCepApi;
 using Microsoft.Extensions.Logging;
 using Refit;

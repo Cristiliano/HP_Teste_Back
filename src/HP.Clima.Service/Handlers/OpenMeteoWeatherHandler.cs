@@ -1,6 +1,7 @@
 using HP.Clima.Domain.DTOs;
 using HP.Clima.Domain.Entities;
 using HP.Clima.Domain.Mappers;
+using HP.Clima.Service.Handlers.Interfaces;
 using HP.Clima.Service.Proxies.OpenMeteo;
 using Microsoft.Extensions.Logging;
 using Refit;
