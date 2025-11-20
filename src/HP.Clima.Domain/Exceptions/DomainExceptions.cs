@@ -12,10 +12,12 @@ public class ValidationException(
 
 public class NotFoundException(
     string detail, 
-    string instance = "") : Exception(detail)
+    string instance = "",
+    string? errorCode = null) : Exception(detail)
 {
     public string Detail { get; } = detail;
     public string Instance { get; } = instance;
+    public string? ErrorCode { get; } = errorCode;
 }
 
 public class ConflictException(

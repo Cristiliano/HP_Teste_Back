@@ -20,6 +20,7 @@ public class ZipCodeRepository(MongoDbContext context) : IZipCodeRepository
     {
         return await _collection
             .Find(_ => true)
+            .SortByDescending(x => x.CreatedAtUtc)
             .ToListAsync();
     }
 
